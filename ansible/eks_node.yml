@@ -1,0 +1,9 @@
+---
+- hosts: "tag_eks_cluster_name_{{ lookup('env', 'eks_cluster') }}"
+  become: yes
+  become_method: sudo
+  become_user: root
+  roles:
+    - eks_node
+...
+

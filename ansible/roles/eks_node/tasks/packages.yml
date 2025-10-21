@@ -1,0 +1,38 @@
+---
+- name: enable ca-trust updates
+  tags: packages,certs
+  become: yes
+  command: update-ca-trust enable   
+
+- name: stage certificate files to be trusted
+  tags: packages,certs
+  copy: src={{ item }} dest=/etc/pki/ca-trust/source/anchors 
+  with_items:
+   - rootca.crt
+   - firewallcert.crt
+
+- name: extract certificates
+  tags: packages,certs
+  command: update-ca-trust extract
+
+- name: add elasticsearch / filebeat repo
+  tags: monitoring,filebeat,packages,repos
+  copy:
+    src: elastic.repo
+    dest: /etc/yum.repos.d/
+    owner: root
+    mode: 0644
+
+- name: disable neuro repo
+  tags: packages
+  shell: yum-config-manager --disable neuron
+  ignore_errors: true
+
+- name: node el7 packages
+  tags: packages,docker
+  package: name={{ item }} state=present update_cache=yes 
+  loop:
+    - "{{ el7_packages }}"
+  register: yum
+
+...

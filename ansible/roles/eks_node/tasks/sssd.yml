@@ -1,0 +1,16 @@
+---
+
+- name: deploy sssd config file
+  tags: sssd
+  notify:
+    - restart_sssd
+  template: src=sssd.conf.j2
+            dest=/etc/sssd/sssd.conf
+            owner=root
+            group=root
+            mode=0600
+
+- meta: flush_handlers
+  tags: sssd
+            
+...

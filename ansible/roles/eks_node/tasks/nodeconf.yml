@@ -1,0 +1,31 @@
+---
+
+- name: template sysctl.conf
+  tags: sysctl,conf
+  template: src=sysctl.j2 dest=/etc/sysctl.conf backup=yes
+
+- name: modify kubelet-config 
+  tags: conf
+  shell: echo "$(jq ".registryPullQPS=100 | .registryBurst=40" /etc/kubernetes/kubelet/kubelet-config.json)" > /etc/kubernetes/kubelet/kubelet-config.json  
+  ignore_errors: true
+
+- name: modify kubelet-config 
+  tags: conf
+  shell: echo "$(jq ".eventRecordQPS=100 | .eventRecordQPS=40" /etc/kubernetes/kubelet/kubelet-config.json)" > /etc/kubernetes/kubelet/kubelet-config.json  
+  ignore_errors: true
+
+- name: modify kubelet-config 
+  tags: conf
+  shell: echo "$(jq ".kubeAPIQPS=100 | .kubeAPIQPS=40" /etc/kubernetes/kubelet/kubelet-config.json)" > /etc/kubernetes/kubelet/kubelet-config.json  
+  notify: restart_kubelet
+  ignore_errors: true
+
+- name: add 99-ulimits.conf file
+  tags: ulimits,conf
+  copy:
+    src: 99-nofile.conf
+    dest: /etc/security/limits.d/
+    owner: root
+    mode: 0644
+
+...

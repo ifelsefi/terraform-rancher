@@ -1,0 +1,15 @@
+---
+- include: packages.yml
+
+- include: nodeconf.yml
+
+- include: sssd.yml
+
+- include: users.yml
+
+- include: sudoers.yml
+
+- include: raid.yml
+  when: raid_scratch is defined
+
+- include: mounts.yml

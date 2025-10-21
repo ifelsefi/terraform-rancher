@@ -1,0 +1,16 @@
+---
+- name: configure sudo access
+  tags: sudo
+  template:
+    src: templates/{{ item.file }}.j2
+    dest: /etc/sudoers.d/{{ item.name }}
+    owner: root
+    group: root
+    mode: 0440
+  register: sudo_update
+  with_items:
+    - name: "{{ sudo_admin }}"
+      file: sudo_admin
+  loop_control:
+    label: "{{ item.name }}"
+

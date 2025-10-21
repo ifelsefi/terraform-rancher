@@ -1,0 +1,25 @@
+---
+- name: create sysadmin home directory
+  tags: users,conf
+  file: name=/home/{{ item.name }} owner={{ item.uid }} group=31337 state=directory
+  with_items: "{{ admins }}"
+  ignore_errors: yes  
+
+- name: copy rancher scripts into users home directory | this gives wrong return code and does not copy all files!
+  tags: users,conf,rancherscripts
+  copy: src={{ item.0 }} dest=/home/{{ item.1 }}/ owner={{ item.1 }} group=31337
+  loop: "{{ rancher_scripts|zip(admins_list)|list }}"        
+  ignore_errors: yes  
+
+- name: template ssh keys
+  tags: users,keys,conf
+  authorized_key: user={{ item.user }} key={{ item.key }} key_options={{ item.option }}
+  with_items:
+    - "{{ user_keys }}"
+  ignore_errors: no
+
+- name: bash files
+  tags: users,conf
+  copy: src={{ item.name }} dest={{ item.dest }} owner={{ item.owner }} group=31337
+  with_items: "{{ bash_files }}"
+...

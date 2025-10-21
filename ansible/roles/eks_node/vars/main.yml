@@ -1,0 +1,107 @@
+---
+
+# variable used in top-level eks_node.yml
+# bash variable read by ansible which was exported
+# by terraform at cluster creation 
+terraform_hosts: "{{ lookup('env', 'version') }}"
+
+# list of packages used in roles/eks_node/tasks/eks_packages.yml    
+el7_packages:
+ - mdadm 
+ - parted  
+ - htop
+ - nmap  
+ - bind-utils 
+ - lsof
+ - ipmitool
+ - traceroute
+ - ca-certificates
+ - chrony
+ - cpupowerutils
+ - python-devel 
+ - rpm-build
+ - libusbx 
+ - gcc-gfortran 
+ - fuse-libs 
+ - libusbx
+ - sysstat
+ - wget
+ - lvm2
+ - mlocate
+ - bc
+ - vim
+ - htop
+ - tmux
+ - realmd
+ - oddjob
+ - oddjob-mkhomedir
+ - sssd
+ - sssd-ad
+ - adcli  
+ - samba-common-tools
+ - pciutils 
+ - lsof
+ - gtk2 
+ - atk 
+ - rclone
+ - cairo 
+ - tcl 
+ - tcsh 
+ - tk
+ - net-tools
+ - numactl
+ - filebeat
+ - ksh
+ - m4
+ - net-tools
+
+# var used in roles/eks_node/tasks/sudoers.yml    
+sudo_admin: "make-me-a-sandwhich"
+
+# var used in roles/eks_node/tasks/mounts.yml
+aws_weka_mounts:
+ - {  path: "/fs/weka1", src: "weka.domain.example.com:/fs1"}
+ - {  path: "/fs/weka2", src: "weka.domain.example.com:/fs2"}
+ - {  path: "/fs/weka3", src: "weka.domain.example.com:/fs3"}
+
+scratch_eth_nfsmounts:
+ - {  path: "/fs/nfs_scratch", src: "scratch.domain.example.com:/scratch" }
+
+
+# vars used in roles/eks_node/tasks/nodeconf.yml   
+rmem_m: 16777216
+wmem_m: 16777216
+rmem_d: 16777216
+optmem_m: 16777216
+netdev_bl: 30000
+somaxconn: 8192
+
+tcp_mem: '16777216 16777216 16777216'
+tcp_rmem: '4096 87380 16777216'
+tcp_wmem: '4096 87380 16777216'
+
+user_keys:
+ - { user: "quackmaster", key: "{{ lookup('file', 'quackmaster_rsa.pub') }}", option: 'from="1.1.1.1"' }
+ - { user: "root", key: "{{ lookup('file', 'files/quackmaster_rsa.pub') }}", option: 'from="1.0.0.1"' }
+ 
+admins: 
+ - { name: "quackmaster", uid: "31337"}
+
+admins_list:
+ - quackmaster
+
+bash_files:
+ - { name: "quackmaster_bashrc", dest: "/dev/null/.bashrc", owner: "quackmaster"}
+ - { name: "quackmaster_profile", dest: "/dev/null/.bash_profile", owner: "quackmaster"}
+
+rancher_scripts:
+ - rancher2_logs_collector.sh
+ - upload_rancher_logs.bash
+
+# vars used in roles/eks_node/tasks/raid.yml  
+raid_dev: /dev/md0
+raid_level: 0
+raid_name: RAID
+raid_mount: /local/scratch
+...
+
